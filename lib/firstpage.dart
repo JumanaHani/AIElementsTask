@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_jumana/secondpage.dart';
 class firstpage extends StatefulWidget {
+  static const routename="firstpage";
   const firstpage({Key? key}) : super(key: key);
 
   @override
@@ -41,7 +42,7 @@ var num=TextEditingController();
 
           })),
               ElevatedButton(onPressed: (){
-Navigator.of(context).pushNamed(secondpage.routename,arguments:[int.parse(num.text),selectedValue] );
+Navigator.of(context).pushReplacementNamed(secondpage.routename,arguments:[int.parse(num.text),selectedValue] );
               }, child: const Text("Next"))
             ],
           ),

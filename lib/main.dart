@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
       routes:
       {
         secondpage.routename: (ctx) => secondpage(),
+        firstpage.routename: (ctx) => firstpage(),
       },
     );
   }

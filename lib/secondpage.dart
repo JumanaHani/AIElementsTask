@@ -1,5 +1,6 @@
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:test_jumana/firstpage.dart';
 
 class secondpage extends StatefulWidget {
   static const routename = 'secondpage';
@@ -10,12 +11,16 @@ class secondpage extends StatefulWidget {
 }
 
 class _secondpageState extends State<secondpage> {
-  List<String> _controllers = [];
+  final focus = FocusNode();
+var _key=GlobalKey<FormState>();
   List<dynamic> _fields = [];
- // String DateValue="";
+  List<String> _controllers = [];
+  String DateValue="";
   @override
   Widget build(BuildContext context) {
-    final controller = TextEditingController();
+
+    var controller = TextEditingController();
+
 
 var arg=ModalRoute.of(context)?.settings.arguments as List;
 int FieldNum=arg[0];
@@ -24,37 +29,60 @@ String type=arg[1];
 
     for(int i=0;i<=FieldNum;i++){
       final field;
-  final controller = TextEditingController();
-      String DateValue="";
+  var controller = TextEditingController();
+
   if(type=="Date"){
+
     field =  DateTimeFormField(
 
-      decoration: const InputDecoration(
-        contentPadding: EdgeInsets.all(0),
-
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: "Input ${i + 1}",
       ),
       mode: DateTimeFieldPickerMode.date,
       autovalidateMode: AutovalidateMode.always,
 
       onDateSelected: (DateTime value) {
-       // setState(() {
+        _controllers.add(value.toString());
+      //  setState(() {
           DateValue=value.toString();
-      //  });
+      // });
 
       },
     );
   }
-  else{  field = TextField(keyboardType:type=="Text"?TextInputType.text:TextInputType.number ,
-    controller: controller,
-    decoration: InputDecoration(
-      border: const OutlineInputBorder(),
-      labelText: "Input ${_controllers.length + 1}",
+  else{  field = FocusScope(
+    onFocusChange: (value) {
+      if (!value) {
+        _controllers.add(controller.value.text);
+        //here checkAndUpdate();
+      }
+    },
+    child: TextField(keyboardType:type=="Text"?TextInputType.text:TextInputType.number ,
+      textInputAction: TextInputAction.next,
+      controller: controller,
+      onEditingComplete: (){
+        FocusScope.of(context).requestFocus(focus);
+      },
+      onChanged: (val){
+
+
+
+
+      },
+
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: "Input ${i + 1}",
+      ),
     ),
-  );}
+  );
+
+  }
 
 
-  setState(() {
-    _controllers.add(controller.text!=""?controller.text:DateValue);
+ setState(() {
+
     _fields.add(field);
   });
 
@@ -74,6 +102,7 @@ String type=arg[1];
     Widget _okButton() {
       return ElevatedButton(
         onPressed: () async {
+          _key.currentState?.save();
           String text = _controllers
               .where((element) => element != "")
               .fold("", (acc, element) => acc += "${element}\n");
@@ -109,6 +138,10 @@ String type=arg[1];
           height:  MediaQuery.of(context).size.height*0.8,
           child: Column(
             children: [
+              Align(child: TextButton(onPressed: (){
+                Navigator.of(context).pushReplacementNamed(firstpage.routename);
+              }
+              ,child: const Text("Create new form"),),),
               Expanded(child: _listView()),
               _okButton(),
             ],
